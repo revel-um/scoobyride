@@ -31,6 +31,7 @@ exports.verifyOtp = (req, res, next) => {
     }).then(result => {
         console.log('inside then');
         console.log('token error');
+        console.log('JWT_KEY = ' + process.env.SECRET_JWT_KEY);
         const token = jwt.sign({
             phoneNumber: phoneNumber,
             code: otp
