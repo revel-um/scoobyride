@@ -29,6 +29,7 @@ exports.verifyOtp = (req, res, next) => {
         to: phoneNumber,
         code: otp
     }).then(result => {
+        console.log('inside then');
         const token = jwt.sign({
             phoneNumber: phoneNumber,
             code: otp
@@ -49,6 +50,7 @@ exports.verifyOtp = (req, res, next) => {
                         response: result
                     })
                 }).catch(err => {
+                    console.log('inside catch save');
                     return res.status(500).json({ saveError: err })
                 })
             }
@@ -60,6 +62,7 @@ exports.verifyOtp = (req, res, next) => {
         })
 
     }).catch(err => {
+        console.log('inside catch verify');
         res.status(500).json({ verifyError: err })
     })
 }
