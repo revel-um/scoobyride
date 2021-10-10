@@ -51,17 +51,16 @@ exports.verifyOtp = (req, res, next) => {
                         response: result
                     })
                 }).catch(err => {
-                    console.log('inside catch save', err);
                     return res.status(500).json({ saveError: err })
                 })
             }
+            else {
+                return res.status(200).json({
+                    token: token,
+                    response: result
+                })
+            }
         })
-
-        return res.status(200).json({
-            token: token,
-            response: result
-        })
-
     }).catch(err => {
         console.log('inside catch verify');
         res.status(500).json({ verifyError: err })
