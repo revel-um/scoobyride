@@ -29,8 +29,7 @@ exports.verifyOtp = (req, res, next) => {
         to: phoneNumber,
         code: otp
     }).then(result => {
-        console.log('inside then');
-        console.log('token error');
+
         console.log('JWT_KEY = ' + process.env.SECRET_JWT_KEY);
         const token = jwt.sign({
             phoneNumber: phoneNumber,
@@ -38,7 +37,7 @@ exports.verifyOtp = (req, res, next) => {
         }, process.env.SECRET_JWT_KEY, {
             expiresIn: "30d"
         })
-        console.log('findone error');
+
         User.findOne({ phoneNumber: phoneNumber }).exec().then(result => {
             if (result == null) {
                 const user = new User({
@@ -52,7 +51,7 @@ exports.verifyOtp = (req, res, next) => {
                         response: result
                     })
                 }).catch(err => {
-                    console.log('inside catch save');
+                    console.log('inside catch save', err);
                     return res.status(500).json({ saveError: err })
                 })
             }
