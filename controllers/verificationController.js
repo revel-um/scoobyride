@@ -30,13 +30,14 @@ exports.verifyOtp = (req, res, next) => {
         code: otp
     }).then(result => {
         console.log('inside then');
+        console.log('token error');
         const token = jwt.sign({
             phoneNumber: phoneNumber,
             code: otp
         }, process.env.SECRET_JWT_KEY, {
             expiresIn: "30d"
         })
-
+        console.log('findone error');
         User.findOne({ phoneNumber: phoneNumber }).exec().then(result => {
             if (result == null) {
                 const user = new User({
