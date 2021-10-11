@@ -24,6 +24,8 @@ exports.createStore = (req, res, next) => {
     storeObj['creationDate'] = new Date();
     storeObj['subscriptionExpired'] = false;
 
+    storeObj['searchQuery'] = req.body.storeName + " " + req.body.city + " " + req.body.pinCode + " " + address;
+
     const store = new Store(storeObj);
     store.save().then(result => {
         console.log(result)
@@ -51,14 +53,19 @@ exports.getAllStores = (req, res, next) => {
     })
 }
 
-exports.getStoresByCityOrPin = (req, res, next) => {
+exports.getStoresByQuery = (req, res, next) => {
+    const searchText = req.query.searchText;
     const city = req.query.city;
-    const pinCode = req.query.pinCode;
-    console.log(city);
-    console.log(pinCode);
-
-    res.send('getStoresByCityOrPin')
-
+    const regex = new RegExp(searchText, 'i')
+    Store.find({city: city, searchQuery: {$regex: regex}}).exec().then(result => {
+        res.status(200).json({
+            data: result
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        })
+    })
 }
 
 exports.deleteStore = (req, res, next) => {

@@ -19,7 +19,7 @@ router.post('/createStore', checkAuth, upload.single('storeImage'), storeControl
 
 router.get('/getAllStores', storeController.getAllStores);
 
-router.get('/getStoresByCityOrPin', storeController.getStoresByCityOrPin);
+router.get('/getStoresByQuery', storeController.getStoresByQuery);
 
 router.delete('/deleteStore/:id', checkAuth, storeController.deleteStore)
 
