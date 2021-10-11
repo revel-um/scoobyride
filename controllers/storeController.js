@@ -56,6 +56,7 @@ exports.getAllStores = (req, res, next) => {
 exports.getStoresByQuery = (req, res, next) => {
     const searchText = req.query.searchText;
     const city = req.query.city;
+    if(city === undefined) res.status(200).json({message: "City is a required parameter for searching"})
     const regex = new RegExp(searchText, 'i')
     Store.find({city: city, searchQuery: {$regex: regex}}).exec().then(result => {
         res.status(200).json({
