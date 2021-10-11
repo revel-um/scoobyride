@@ -11,9 +11,10 @@ function replaceAll(str, find, replace) {
 exports.createStore = (req, res, next) => {
     const storeObj = {}
 
-    if (req.file !== undefined)
+    if (req.file !== undefined) {
         const path = process.env.BASE_URL + replaceAll(req.file.path, '\\\\', '/');
-    storeObj['storeImage'] = path
+        storeObj['storeImage'] = path
+    }
 
     for (const key of Object.keys(req.body)) {
         storeObj[key] = req.body[key]
