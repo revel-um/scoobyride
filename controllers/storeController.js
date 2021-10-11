@@ -9,20 +9,21 @@ function replaceAll(str, find, replace) {
 }
 
 exports.createStore = (req, res, next) => {
-    let path = null;
-    if (req.file !== undefined)
-        path = process.env.BASE_URL + replaceAll(req.file.path, '\\\\', '/');
+    const storeObj = {}
 
-    const store = new Store({
-        _id: mongoose.Types.ObjectId(),
-        storeName: req.body.storeName,
-        latitude: req.body.latitude,
-        longitude: req.body.longitude,
-        address: req.body.address,
-        creationDate: new Date(),
-        subscriptionExpired: false,
-        storeImage: path,
-    })
+    if (req.file !== undefined)
+        const path = process.env.BASE_URL + replaceAll(req.file.path, '\\\\', '/');
+    storeObj['storeImage'] = path
+
+    for (const key of Object.keys(req.body)) {
+        storeObj[key] = req.body[key]
+    }
+
+    storeObj['_id'] = mongoose.Types.ObjectId();
+    storeObj['creationDate'] = new Date();
+    storeObj['subscriptionExpired'] = false;
+
+    const store = new Store(storeObj);
     store.save().then(result => {
         console.log(result)
         res.status(200).json({
