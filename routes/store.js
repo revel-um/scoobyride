@@ -19,6 +19,8 @@ router.post('/createStore', checkAuth, upload.single('storeImage'), storeControl
 
 router.get('/getAllStores', storeController.getAllStores);
 
+router.get('/getStoresByCityOrPin', storeController.getStoresByCityOrPin);
+
 router.delete('/deleteStore/:id', checkAuth, storeController.deleteStore)
 
 router.patch('/updateStore/:id', checkAuth, upload.single('storeImage'), storeController.updateStore)

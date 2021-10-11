@@ -51,6 +51,16 @@ exports.getAllStores = (req, res, next) => {
     })
 }
 
+exports.getStoresByCityOrPin = (req, res, next) => {
+    const city = req.query.city;
+    const pinCode = req.query.pinCode;
+    console.log(city);
+    console.log(pinCode);
+
+    res.send('getStoresByCityOrPin')
+
+}
+
 exports.deleteStore = (req, res, next) => {
     const id = req.params.id
 
