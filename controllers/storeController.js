@@ -24,7 +24,7 @@ exports.createStore = (req, res, next) => {
     storeObj['creationDate'] = new Date();
     storeObj['subscriptionExpired'] = false;
 
-    storeObj['searchQuery'] = req.body.storeName + " " + req.body.city + " " + req.body.pinCode + " " + address;
+    storeObj['searchQuery'] = req.body.storeName + " " + req.body.city + " " + req.body.pinCode + " " + req.body.address;
 
     const store = new Store(storeObj);
     store.save().then(result => {
