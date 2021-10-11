@@ -38,7 +38,7 @@ exports.createProduct = (req, res, next) => {
 }
 
 exports.getTopProducts = (req, res, next) => {
-    Product.find().exec().then(result => {
+    Product.find().populate('store').exec().then(result => {
         res.status(200).json({
             data: result
         })
