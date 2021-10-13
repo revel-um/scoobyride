@@ -5,15 +5,20 @@ const router = require('express').Router();
 
 const productController = require('../controllers/productController')
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './images/productImages/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, mongoose.Types.ObjectId() + file.originalname);
-    }
-})
-const upload = multer({ storage: storage });
+const path = require('path')
+const multerGoogleStorage = require('multer-google-storage')
+
+const upload = multer({
+    storage: multerGoogleStorage.storageEngine({
+        autoRetry: true,
+        keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
+        projectId: "madhuram-328908",
+        bucket: 'madhuram-storage',
+        filename: (req, file, cb) => {
+            cb(null, '/images/' + Date.now() + file.originalname);
+        }
+    })
+});
 
 router.post('/createProduct', checkAuth, upload.array('productImages'), productController.createProduct)
 
@@ -23,7 +28,7 @@ router.get('/getProductsByQuery', productController.getProductsByQuery)
 
 router.get('/getProductsOfStore', productController.getProductsOfStore)
 
-router.patch('/updateProduct', productController.updateProduct)
+router.patch('/updateProduct', checkAuth, upload.array('productImages'), productController.updateProduct)
 
 router.delete('/deleteProduct', checkAuth, productController.deleteProduct)
 

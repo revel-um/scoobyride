@@ -7,6 +7,31 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
+const { Storage } = require('@google-cloud/storage')
+const path = require('path')
+
+const storage = new Storage({
+    keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
+    projectId: "madhuram-328908",
+});
+
+function deleteObject(url) {
+    if (url == null) return;
+    new Promise((resolve, reject) => {
+        const imageurl = replaceAll(url, 'https:/madhuram-storage.storage.googleapis.com/', '');
+        storage
+            .bucket("madhuram-storage")
+            .file(imageurl)
+            .delete()
+            .then((image) => {
+                resolve(image)
+            })
+            .catch((e) => {
+                reject(e)
+            });
+    });
+}
+
 exports.createProduct = (req, res, next) => {
     const storeId = req.body.store;
     Store.findOne({ _id: storeId }).exec().then(result => {
@@ -26,7 +51,7 @@ exports.createProduct = (req, res, next) => {
         if (req.files !== undefined) {
             const paths = []
             for (file of req.files) {
-                const path = process.env.BASE_URL + replaceAll(file.path, '\\\\', '/');
+                const path = replaceAll(file.path, '//', '/');
                 paths.push(path);
             }
             productObj['productImages'] = paths;
@@ -172,25 +197,42 @@ exports.getProductsByQuery = (req, res, next) => {
 }
 
 exports.updateProduct = (req, res, next) => {
-    const id = req.query.id;
-    updateObj = {}
-    for (const key of Object.keys(req.body)) {
-        updateObj[key] = req.body[key];
-    }
-    Product.updateOne({ _id: id }, { $set: updateObj }).exec().then(result => {
-        res.status(200).json({ data: result })
+    Product.findOne({ _id: id }).exec().then(result => {
+        if (result != null) {
+            const productImages = result.productImages;
+            for (const imageUrl of productImages){
+                deleteObject(imageUrl);
+            }
+            const id = req.query.id;
+            updateObj = {}
+            for (const key of Object.keys(req.body)) {
+                updateObj[key] = req.body[key];
+            }
+            if (req.files !== undefined) {
+                const paths = []
+                for (file of req.files) {
+                    const path = replaceAll(file.path, '//', '/');
+                    paths.push(path);
+                }
+                updateObj['productImages'] = paths;
+            }
+            Product.updateOne({ _id: id }, { $set: updateObj }).exec().then(result => {
+                res.status(200).json({ data: result })
+            }).catch(err => {
+                res.status(500).json({ error: err })
+            })
+        }
     }).catch(err => {
         res.status(500).json({ error: err })
     })
 }
 
 exports.deleteProduct = (req, res, next) => {
-    const id = req.query.productId;
+    const id = req.query.id;
     Product.findById(id).exec().then(result => {
         for (const image of result.productImages) {
             try {
-                const url = image.replace(process.env.BASE_URL, '');
-                fs.unlinkSync(url);
+                deleteObject(image);
             } catch (e) {
                 console.log('Image not available');
             }

@@ -3,6 +3,35 @@ const Store = require('../schemas/storeSchema')
 const Product = require('../schemas/productSchema')
 const fs = require('fs');
 
+const { Storage } = require('@google-cloud/storage')
+const path = require('path')
+
+const storage = new Storage({
+    keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
+    projectId: "madhuram-328908",
+});
+
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
+
+function deleteObject(url) {
+    if (url == null) return;
+    new Promise((resolve, reject) => {
+        const imageurl = replaceAll(url, 'https:/madhuram-storage.storage.googleapis.com/', '');
+        storage
+            .bucket("madhuram-storage")
+            .file(imageurl)
+            .delete()
+            .then((image) => {
+                resolve(image)
+            })
+            .catch((e) => {
+                reject(e)
+            });
+    });
+}
+
 
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
@@ -12,7 +41,7 @@ exports.createStore = (req, res, next) => {
     const storeObj = {}
 
     if (req.file !== undefined) {
-        const path = process.env.BASE_URL + replaceAll(req.file.path, '\\\\', '/');
+        const path = replaceAll(req.file.path, '//', '/');
         storeObj['storeImage'] = path
     }
 
@@ -158,8 +187,7 @@ exports.deleteStore = (req, res, next) => {
                 }).exec().then(result => {
                     if (r != null) {
                         try {
-                            const url = r.replace(process.env.BASE_URL, '');
-                            fs.unlinkSync(url);
+                            deleteObject(r);
                             imageDeletion = 'Image deleted successfully';
                         } catch (e) {
                             imageDeletion = 'Image not found'
@@ -184,8 +212,7 @@ exports.deleteStore = (req, res, next) => {
             }).exec().then(result => {
                 if (r != null) {
                     try {
-                        const url = r.replace(process.env.BASE_URL, '');
-                        fs.unlinkSync(url);
+                        deleteObject(r);
                         imageDeletion = 'Image deleted successfully';
                     } catch (e) {
                         imageDeletion = 'Image not found'
@@ -208,7 +235,7 @@ exports.updateStore = (req, res, next) => {
     const updateObj = {}
     let path = null;
     if (req.file !== undefined) {
-        path = process.env.BASE_URL + replaceAll(req.file.path, '\\\\', '/');
+        path = replaceAll(req.file.path, '//', '/');
         updateObj['storeImage'] = path;
     }
     for (const key of Object.keys(req.body)) {
