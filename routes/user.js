@@ -3,7 +3,6 @@ const router = require('express').Router()
 const checkAuth = require('../middlewares/checkAuth')
 const userController = require('../controllers/userController')
 
-
 const multer = require('multer')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

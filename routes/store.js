@@ -21,8 +21,8 @@ router.get('/getAllStores', storeController.getAllStores);
 
 router.get('/getStoresByQuery', storeController.getStoresByQuery);
 
-router.delete('/deleteStore/:id', checkAuth, storeController.deleteStore)
+router.delete('/deleteStore', checkAuth, storeController.deleteStore)
 
-router.patch('/updateStore/:id', checkAuth, upload.single('storeImage'), storeController.updateStore)
+router.patch('/updateStore', checkAuth, upload.single('storeImage'), storeController.updateStore)
 
 module.exports = router

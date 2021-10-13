@@ -17,10 +17,14 @@ const upload = multer({ storage: storage });
 
 router.post('/createProduct', checkAuth, upload.array('productImages'), productController.createProduct)
 
-router.get('/getTopProducts', productController.getTopProducts)
+router.get('/getAllProducts', productController.getAllProducts)
+
+router.get('/getProductsByQuery', productController.getProductsByQuery)
 
 router.get('/getProductsOfStore', productController.getProductsOfStore)
 
-router.delete('/deleteProduct/:productId', checkAuth, productController.deleteProduct)
+router.patch('/updateProduct', productController.updateProduct)
+
+router.delete('/deleteProduct', checkAuth, productController.deleteProduct)
 
 module.exports = router;

@@ -9,7 +9,6 @@ const storeSchema = mongoose.Schema({
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     address: { type: String, required: true },
-    searchQuery: String,
     creationDate: { type: Date, required: true },
     subscriptionExpired: { type: Boolean, required: true },
     openHours: { type: [String], default: ["08:00", "08:00", "08:00", "08:00", "08:00", "08:00", "08:00",] },

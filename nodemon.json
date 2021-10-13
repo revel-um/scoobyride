@@ -1,6 +1,6 @@
 {
     "env": {
         "SECRET_JWT_KEY": "MADHURAM_JWT_PASSKEY",
-        "BASE_URL": "https://madhuram-marketapis.herokuapp.com/"
+        "BASE_URL": "localhost:3000/"
     }
 }

@@ -24,8 +24,6 @@ exports.createStore = (req, res, next) => {
     storeObj['creationDate'] = new Date();
     storeObj['subscriptionExpired'] = false;
 
-    storeObj['searchQuery'] = req.body.storeName + " " + req.body.city + " " + req.body.pinCode + " " + req.body.address;
-
     const store = new Store(storeObj);
     store.save().then(result => {
         console.log(result)
@@ -41,10 +39,100 @@ exports.createStore = (req, res, next) => {
     })
 }
 
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+}
+function deg2rad(deg) {
+    return deg * (Math.PI / 180)
+}
+
 exports.getAllStores = (req, res, next) => {
-    Store.find().exec().then(result => {
+    const km = req.query.km;
+    const lat0 = req.query.latitude;
+    const lon0 = req.query.longitude;
+    const city = req.query.city;
+
+    if (city == null) {
+        return res.status(400).json({
+            message: 'City is required as query'
+        })
+    }
+
+    if (km == null || lat0 == null || lon0 == null) {
+        Store.find({ city: city }).exec().then(result => {
+            res.status(200).json({
+                data: result
+            })
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        })
+        return;
+    }
+
+    Store.find({ city: city }).exec().then(result => {
+        returnObj = []
+        for (const r of result) {
+            const lat = r.latitude;
+            const lon = r.longitude;
+            const distance = getDistanceFromLatLonInKm(lat0, lon0, lat, lon)
+            if (distance < km) {
+                returnObj.push(r)
+            }
+        }
+        res.status(200).json({ data: returnObj })
+    }).catch(err => {
+        res.status(500).json({
+            error: err
+        })
+    })
+}
+
+const isSubsequence = (str1, str2) => {
+    let i = 0;
+    let j = 0;
+    while (i < str1.length) {
+        if (j === str2.length) {
+            return false;
+        }
+        if (str1[i] === str2[j]) {
+            i++;
+        }
+        j++;
+    };
+    return true;
+};
+
+exports.getStoresByQuery = (req, res, next) => {
+    const searchText = req.query.searchText;
+    const city = req.query.city;
+    if (searchText == null) return res.status(200).json({ message: "SearchText is a required parameter for searching" })
+    if (city == null) return res.status(200).json({ message: "City is a required parameter for searching" })
+    Store.find({ city: city }).exec().then(result => {
+        const returnObj = []
+        for (r of result) {
+            let searchQuery = ''
+            if (r.storeName != null) searchQuery += r.storeName
+            if (r.city != null) searchQuery += r.city
+            if (r.pinCode != null) searchQuery += r.pinCode
+            if (r.address != null) searchQuery += r.address;
+            if (isSubsequence(searchText.toLowerCase(), searchQuery.toLowerCase())) {
+                returnObj.push(r)
+            }
+        }
         res.status(200).json({
-            data: result
+            data: returnObj
         })
     }).catch(err => {
         res.status(500).json({
@@ -53,24 +141,8 @@ exports.getAllStores = (req, res, next) => {
     })
 }
 
-exports.getStoresByQuery = (req, res, next) => {
-    const searchText = req.query.searchText;
-    const city = req.query.city;
-    if(city === undefined) res.status(200).json({message: "City is a required parameter for searching"})
-    const regex = new RegExp(searchText, 'i')
-    Store.find({city: city, searchQuery: {$regex: regex}}).exec().then(result => {
-        res.status(200).json({
-            data: result
-        }).catch(err => {
-            res.status(500).json({
-                error: err
-            })
-        })
-    })
-}
-
 exports.deleteStore = (req, res, next) => {
-    const id = req.params.id
+    const id = req.query.id
 
     Product.find({ store: id }).exec().then(result => {
         if (result.length > 0) {
@@ -132,7 +204,7 @@ exports.deleteStore = (req, res, next) => {
 }
 
 exports.updateStore = (req, res, next) => {
-    const id = req.params.id
+    const id = req.query.id
     const updateObj = {}
     let path = null;
     if (req.file !== undefined) {
