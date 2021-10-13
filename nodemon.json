@@ -1,6 +1,5 @@
 {
     "env": {
-        "SECRET_JWT_KEY": "MADHURAM_JWT_PASSKEY",
-        "BASE_URL": "localhost:3000/"
+        "SECRET_JWT_KEY": "MADHURAM_JWT_PASSKEY"
     }
 }
