@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "madhuram-328908",
+  "private_key_id": "1738d4396037b68c84af83f8ccb5466970777d40",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQChoOez2wMFDShn\nv8qKtjw/y2q29oYI+jl8KvZsEMoM4RJA49ZnUvXzy7guq5Q8SL5hkEacU0dDMt9B\ndwVGrwS7EAKcUs4kd850XkqPz1g/Qfzp5zMgBIJ9U8JAxKCm/7945pQrOcgednS0\nteKACgx9av54hPGS+av87KQ5TNYAoRfNEIEY4FXIIaTA0pY3eMf/+6xbCeuT2VHW\n7qxMQV+bLbl2Y3jaWMaSMUeB+gPpsRcuPyKvtd+hJT6WI8UmrKdXgJ/38u+aUUI7\nHBth55aYZxSPWvBvErBwBpXyK1nRvXZpRJGoR63oEIBlZFemjZJpvqDrNhaDsnMd\nw/0pSLLRAgMBAAECggEAAU+CyXfQwAlRsaOsaAW0b9z9ph2ndmpXAygoXDXM+Z/t\nQWGc6F9pF1C90y0OKZNPwzlDr/qnOjGEU218ZAzBGFDigIjVsJXYcqOdbanuqyv6\nZHLSPI56I2YwOKJk3hh2oZZBudGrtdQxO+ePU7P2fXbbuOJKa4Ntma0D444Osdhu\nlnffv+YC3V+ep/hmiMS7MwVXO3V14Lnljwbr1RrJ1E4yg++CoeEmi2UqUZWDxXlh\nbvvrONswzTuHkHxRUgCG1Cx/PW4nzF7DMAtaBIfB0PgwJDmeQu1ahH7De5M3fu0w\n7sr3u8tyQTqAva5DoVfWOymJUF9MEqTOlQqOS7CCdQKBgQDXiJdoW1icIqnfwXT8\nTPgGDT5oHMLCm3g8AEs8aj176+2eLsODzbYR7J8FLYS3Y12lbvrUylW8nkDyo9n6\nCyNKkCBnB1kFZ692VW+moA+LsoLiiqkauSD+XR+pY8GvQJV2a4AiC+InIzNgDrGd\nUiyUb7yA65JSJFKLAJiHH7hTlQKBgQC/+Wvx3q8j9roxqjE9V5uMorZmgKn+XhfO\nIym/RplCBL6v/YvaNK8Gwojh++Zf63TZQ50BDDyxj3pfnB18wKSzrMOKbXXLmHLh\nTo077f2cePAQlHJVRHDmNrxhvB8LSSr1R80YK7SL8ZSuPZC8hqfFVV5EflyeJL3b\nGZxYVTWTTQKBgQCiHjS8oxDYiF48Vth2ujJI4wdQ6mk4VhavEw2ESOksX/6gX85i\nQoYzn0bRbzaHdm9G814qVnL86BA0MjjQEjaebCBjPqygGyhomsTbkUOAMWqvmdqu\npheCHGunTsit2KdTpnJ/qW6XP6vyEbtZeSjdEdq5IfgyXu3TbkRMRvivrQKBgD7b\nGb7d3JZ36EruoKSnFKUdeX9iTUad5El4NekM4o09JHpXF/1gFpauB0eGxM1POLkS\nbEu1iAHTKow3f2gjY0n5HSUr5c+9oI+oupGOwOUErAWhtTW57QVTkqalg7ycPlaF\nJd/uH3VaqgXK3qL7q97urqjaftTAzvD4F7rMW3hZAoGAZnb7hkfzBLMjF7/fD0MC\nFKvu+2gIg9ssbeMAsXprFx65GdzJtqBO5CXK0q1U+8eDG7LggA03k1dvBsIl/ao4\n/kvicjOWMFL6hMQvesh12eybfrO3c6m8h94HsjTABsih02Ws66az1dkmrf+Y755M\nXzT8TiQZXFWOvDNHWsNANZA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "madhuram-storage-service@madhuram-328908.iam.gserviceaccount.com",
+  "client_id": "117030287425702923514",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/madhuram-storage-service%40madhuram-328908.iam.gserviceaccount.com"
+}
