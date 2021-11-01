@@ -10,7 +10,7 @@ const multerGoogleStorage = require('multer-google-storage')
 const upload = multer({
     storage: multerGoogleStorage.storageEngine({
         autoRetry: true,
-        keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
+        keyFilename: require.resolve('./madhuram-328908-1738d4396037.json'),
         projectId: "madhuram-328908",
         bucket: 'madhuram-storage',
         filename: (req, file, cb) => {
