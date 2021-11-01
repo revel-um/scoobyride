@@ -32,7 +32,6 @@ function deleteObject(url) {
     });
 }
 
-
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
@@ -81,6 +80,7 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var d = R * c; // Distance in km
     return d;
 }
+
 function deg2rad(deg) {
     return deg * (Math.PI / 180)
 }
@@ -126,6 +126,21 @@ exports.getAllStores = (req, res, next) => {
             error: err
         })
     })
+}
+
+exports.getStoreByPhone = (req, res, next) => {
+    const phone = req.query.phoneNumber;
+    if (phone == null) {
+        return res.status(400).json({
+            message: 'Phone number not provided'
+        });
+    } else {
+        Store.find({ phoneNumber: phone }).exec().then(result => {
+            return res.status(200).json({ data: result });
+        }).catch(err => {
+            error: err
+        });
+    }
 }
 
 const isSubsequence = (str1, str2) => {

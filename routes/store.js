@@ -25,6 +25,8 @@ router.post('/createStore', checkAuth, upload.single('storeImage'), storeControl
 
 router.get('/getAllStores', storeController.getAllStores);
 
+router.get('/getStoresByPhone', storeController.getStoreByPhone);
+
 router.get('/getStoresByQuery', storeController.getStoresByQuery);
 
 router.delete('/deleteStore', checkAuth, storeController.deleteStore)

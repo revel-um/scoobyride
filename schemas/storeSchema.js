@@ -5,6 +5,7 @@ const storeSchema = mongoose.Schema({
     storeName: { type: String, required: true },
     storeImage: String,
     pinCode: {type: Number, required: true},
+    phoneNumber: {type: String, required: true},
     city: {type: String, required: true},
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
