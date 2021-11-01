@@ -15,7 +15,7 @@ const upload = multer({
         filename: (req, file, cb) => {
             cb(null, '/images/' + Date.now() + file.originalname);
         }
-    })
+    }),
 });
 
 const checkAuth = require('../middlewares/checkAuth')
