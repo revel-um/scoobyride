@@ -91,14 +91,8 @@ exports.getAllStores = (req, res, next) => {
     const lon0 = req.query.longitude;
     const city = req.query.city;
 
-    if (city == null) {
-        return res.status(400).json({
-            message: 'City is required as query'
-        })
-    }
-
-    if (km == null || lat0 == null || lon0 == null) {
-        Store.find({ city: city }).exec().then(result => {
+    if ((km == null || lat0 == null || lon0 == null) && city != null) {
+        return Store.find({ city: city }).exec().then(result => {
             res.status(200).json({
                 data: result
             })
@@ -109,23 +103,46 @@ exports.getAllStores = (req, res, next) => {
         })
         return;
     }
-
-    Store.find({ city: city }).exec().then(result => {
-        returnObj = []
-        for (const r of result) {
-            const lat = r.latitude;
-            const lon = r.longitude;
-            const distance = getDistanceFromLatLonInKm(lat0, lon0, lat, lon)
-            if (distance < km) {
-                returnObj.push(r)
-            }
+    else {
+        if ((city == null) && (km != null && lat0 != null && lon0 != null)) {
+            return Store.find().exec().then(result => {
+                returnObj = []
+                for (const r of result) {
+                    const lat = r.latitude;
+                    const lon = r.longitude;
+                    const distance = getDistanceFromLatLonInKm(lat0, lon0, lat, lon)
+                    if (distance < km) {
+                        returnObj.push(r)
+                    }
+                }
+                res.status(200).json({ data: returnObj })
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
+                })
+            })
+        } if ((city != null) && (km != null && lat0 != null && lon0 != null)) {
+            return Store.find({ city: city }).exec().then(result => {
+                returnObj = []
+                for (const r of result) {
+                    const lat = r.latitude;
+                    const lon = r.longitude;
+                    const distance = getDistanceFromLatLonInKm(lat0, lon0, lat, lon)
+                    if (distance < km) {
+                        returnObj.push(r)
+                    }
+                }
+                res.status(200).json({ data: returnObj })
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
+                })
+            })
         }
-        res.status(200).json({ data: returnObj })
-    }).catch(err => {
-        res.status(500).json({
-            error: err
-        })
-    })
+    }
+    return res.status(400).json({
+        error: 'Permeter not sufficient to find stores'
+    });
 }
 
 exports.getStoreByPhone = (req, res, next) => {
