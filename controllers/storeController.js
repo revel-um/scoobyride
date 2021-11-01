@@ -40,7 +40,8 @@ exports.createStore = (req, res, next) => {
     const storeObj = {}
 
     if (req.file !== undefined) {
-        const path = replaceAll(req.file.path, '//', '/');
+        let path = replaceAll(req.file.path, '//', '/');
+        path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.cloud.google.com/madhuram-storage')
         storeObj['storeImage'] = path
     }
 

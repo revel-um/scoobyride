@@ -15,6 +15,7 @@ function deleteObject(url) {
     if (url == null) return;
     new Promise((resolve, reject) => {
         const imageurl = replaceAll(url, 'https:/madhuram-storage.storage.googleapis.com/', '');
+        imageurl = replaceAll(imageurl, 'madhuram-storage.storage.googleapis.com', '/storage.cloud.google.com/madhuram-storage')
         storage
             .bucket("madhuram-storage")
             .file(imageurl)

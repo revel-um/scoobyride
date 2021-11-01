@@ -52,6 +52,7 @@ exports.createProduct = (req, res, next) => {
             const paths = []
             for (file of req.files) {
                 const path = replaceAll(file.path, '//', '/');
+                path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.cloud.google.com/madhuram-storage')
                 paths.push(path);
             }
             productObj['productImages'] = paths;
