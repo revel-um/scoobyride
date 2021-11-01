@@ -38,7 +38,7 @@ function replaceAll(str, find, replace) {
 
 exports.createStore = (req, res, next) => {
     const storeObj = {}
-    console.log(res.body);
+    console.log(req.body);
     if (req.file !== undefined) {
         const path = replaceAll(req.file.path, '//', '/');
         storeObj['storeImage'] = path
