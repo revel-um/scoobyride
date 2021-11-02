@@ -18,7 +18,7 @@ function replaceAll(str, find, replace) {
 function deleteObject(url) {
     if (url == null) return;
     new Promise((resolve, reject) => {
-        const imageurl = replaceAll(url, 'https:/madhuram-storage.storage.googleapis.com/', '');
+        const imageurl = replaceAll(url, 'https://storage.googleapis.com/madhuram-storage/', '');
         storage
             .bucket("madhuram-storage")
             .file(imageurl)
