@@ -14,8 +14,7 @@ function replaceAll(str, find, replace) {
 function deleteObject(url) {
     if (url == null) return;
     new Promise((resolve, reject) => {
-        const imageurl = replaceAll(url, 'https:/madhuram-storage.storage.googleapis.com/', '');
-        imageurl = replaceAll(imageurl, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage')
+        const imageurl = replaceAll(url, 'https://storage.googleapis.com/madhuram-storage/', '');
         storage
             .bucket("madhuram-storage")
             .file(imageurl)
@@ -38,6 +37,7 @@ exports.updateUser = (req, res, next) => {
         }
         if (req.file !== undefined) {
             const path = replaceAll(req.file.path, '//', '/');
+            path = replaceAll(req.file.path, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage')
             userObj['profilePicture'] = path;
         }
         User.updateOne({ phoneNumber: req.userData.phoneNumber }, { $set: userObj }).then(result => {
