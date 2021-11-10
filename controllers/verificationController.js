@@ -51,7 +51,7 @@ exports.verifyOtp = (req, res, next) => {
                         response: result
                     })
                 }).catch(err => {
-                    return res.status(500).json({ saveError: err })
+                    return res.status(400).json({ saveError: err })
                 })
             }
             else {
