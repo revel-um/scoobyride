@@ -143,18 +143,12 @@ exports.getAllStores = (req, res, next) => {
 }
 
 exports.getStoreByPhone = (req, res, next) => {
-    const phone = req.query.phoneNumber;
-    if (phone == null) {
-        return res.status(400).json({
-            message: 'Phone number not provided'
-        });
-    } else {
-        Store.find({ phoneNumber: phone }).exec().then(result => {
-            return res.status(200).json({ data: result });
-        }).catch(err => {
-            error: err
-        });
-    }
+    const phone = userData.phoneNumber;
+    Store.find({ phoneNumber: phone }).exec().then(result => {
+        return res.status(200).json({ data: result });
+    }).catch(err => {
+        error: err
+    });
 }
 
 const isSubsequence = (str1, str2) => {
