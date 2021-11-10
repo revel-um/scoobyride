@@ -145,10 +145,19 @@ exports.getAllStores = (req, res, next) => {
 exports.getStoreByPhone = (req, res, next) => {
     const phone = req.userData.phoneNumber;
     Store.find({ phoneNumber: phone }).exec().then(result => {
-        return res.status(200).json({ data: result });
-    }).catch(err => {
+        res.status(200).json({ data: result });
+    }).catch(err => res.status(500).json({
         error: err
-    });
+    }));
+}
+
+exports.getStoreById = (req, res, next) => {
+    const id = req.query.storeId;
+    Store.findById(id).exec().then(result => {
+        res.status(200).json({data: result});
+    }).catch(err => res.status(500).json({
+        error: err
+    }));
 }
 
 const isSubsequence = (str1, str2) => {
