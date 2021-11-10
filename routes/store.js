@@ -23,11 +23,11 @@ const storeController = require('../controllers/storeController')
 
 router.post('/createStore', checkAuth, upload.single('storeImage'), storeController.createStore);
 
-router.get('/getAllStores', storeController.getAllStores);
+router.get('/getAllStores', checkAuth, storeController.getAllStores);
 
-router.get('/getStoresByPhone', storeController.getStoreByPhone);
+router.get('/getStoresByPhone', checkAuth, storeController.getStoreByPhone);
 
-router.get('/getStoresByQuery', storeController.getStoresByQuery);
+router.get('/getStoresByQuery', checkAuth, storeController.getStoresByQuery);
 
 router.delete('/deleteStore', checkAuth, storeController.deleteStore)
 
