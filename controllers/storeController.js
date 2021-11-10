@@ -143,7 +143,7 @@ exports.getAllStores = (req, res, next) => {
 }
 
 exports.getStoreByPhone = (req, res, next) => {
-    const phone = userData.phoneNumber;
+    const phone = req.userData.phoneNumber;
     Store.find({ phoneNumber: phone }).exec().then(result => {
         return res.status(200).json({ data: result });
     }).catch(err => {
