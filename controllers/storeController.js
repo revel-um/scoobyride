@@ -197,6 +197,11 @@ exports.deleteStore = (req, res, next) => {
     const id = req.query.id
 
     Product.find({ store: id }).exec().then(result => {
+        if (result.length == 0) {
+            return res.status(500).json({
+                message: 'No stores found'
+            })
+        }
         if (result.length > 0) {
             return res.status(400).json({
                 message: 'There are ' + result.length + ' products left in your store. Delete them first to delete the store'
