@@ -79,10 +79,16 @@ exports.createProduct = (req, res, next) => {
 
 exports.getProductsOfStore = (req, res, next) => {
     const storeId = req.query.storeId;
-    Product.find({ store: storeId }).populate('store').exec().then(result => {
-        res.status(200).json({
-            data: result
-        })
+    Product.find({ store: storeId }).exec().then(result => {
+        Store.findById(storeId).exec().then(result1 => {
+            res.status(200).json({
+                data: { 'products': result, 'store': result1 }
+            })
+        }).catch(err => {
+            res.status(400).json({
+                error: err
+            })
+        });
     }).catch(err => {
         res.status(500).json({
             error: err
@@ -201,7 +207,7 @@ exports.updateProduct = (req, res, next) => {
     Product.findOne({ _id: id }).exec().then(result => {
         if (result != null) {
             const productImages = result.productImages;
-            for (const imageUrl of productImages){
+            for (const imageUrl of productImages) {
                 deleteObject(imageUrl);
             }
             const id = req.query.id;
