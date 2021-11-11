@@ -79,7 +79,7 @@ exports.createProduct = (req, res, next) => {
 
 exports.getProductsOfStore = (req, res, next) => {
     const storeId = req.query.storeId;
-    Product.find({ store: storeId }).exec().then(result => {
+    Product.find({ store: storeId }).populate('store').exec().then(result => {
         res.status(200).json({
             data: result
         })
