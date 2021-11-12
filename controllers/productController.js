@@ -51,7 +51,7 @@ exports.createProduct = (req, res, next) => {
         if (req.files !== undefined) {
             const paths = []
             for (file of req.files) {
-                const path = replaceAll(file.path, '//', '/');
+                let path = replaceAll(file.path, '//', '/');
                 path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage')
                 paths.push(path);
             }
