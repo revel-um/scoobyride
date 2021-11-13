@@ -2,7 +2,10 @@ const mongoose = require('mongoose')
 
 const productSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    title: { type: String, required: true },
+    model: { type: String, required: true },
+    licencePlate: { type: String, required: true },
+    rentPerHour: { type: String, required: true },
+    rentPerDay: { type: String, required: true },
     productImages: { type: [String], default: [] },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store', require: true },
     criteria: { type: String, required: true },
