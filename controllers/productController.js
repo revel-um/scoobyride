@@ -27,6 +27,7 @@ function deleteObject(url) {
                 resolve(image)
             })
             .catch((e) => {
+                console.log('error print = ' + e);
                 reject(e)
             });
     });
