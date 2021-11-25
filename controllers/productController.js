@@ -210,12 +210,12 @@ exports.getProductsByQuery = (req, res, next) => {
 exports.updateProduct = (req, res, next) => {
     const id = req.query.id;
     Product.findOne({ _id: id }).exec().then(result => {
-        if (result != null) {            
+        if (result != null) {
             updateObj = {}
             for (const key of Object.keys(req.body)) {
                 updateObj[key] = req.body[key];
             }
-            if (req.files !== undefined) {
+            if (req.files !== undefined && req.files.length > 0) {
                 const productImages = result.productImages;
                 for (const imageUrl of productImages) {
                     deleteObject(imageUrl);
