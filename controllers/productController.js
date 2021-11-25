@@ -20,7 +20,7 @@ const storage = new Storage({
 function deleteObject(url) {
     if (url == null) return;
     new Promise((resolve, reject) => {
-        const imageurl = replaceAll(url, 'https://storage.googleapis.com/', '');
+        const imageurl = replaceAll(url, 'https://storage.googleapis.com/madhuram-storage', '');
         console.log('imageurl print = ' + imageurl);
         storage
             .bucket("madhuram-storage")
