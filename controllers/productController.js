@@ -212,8 +212,8 @@ exports.updateProduct = (req, res, next) => {
                 updateObj[key] = req.body[key];
             }
             console.log(req.files);
-            console.log(req.files.size);
-            if (req.files !== undefined && req.files.size > 0) {
+            console.log(req.files.length);
+            if (req.files !== undefined && req.files.length > 0) {
                 const productImages = result.productImages;
                 for (const imageUrl of productImages) {
                     deleteObject(imageUrl);
