@@ -14,11 +14,11 @@ const storage = new Storage({
     keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
     projectId: "madhuram-328908",
 });
-
+//https://storage.googleapis.com/madhuram-storage/images/1637829262878image_picker6662573032523048489.jpg
 function deleteObject(url) {
     if (url == null) return;
     new Promise((resolve, reject) => {
-        const imageurl = replaceAll(url, 'https:/madhuram-storage.storage.googleapis.com/', '');
+        const imageurl = replaceAll(url, 'https:/madhuram-storage.storage.googleapis.com/madhuram-storage/', '');
         storage
             .bucket("madhuram-storage")
             .file(imageurl)
@@ -207,15 +207,16 @@ exports.updateProduct = (req, res, next) => {
     const id = req.query.id;
     Product.findOne({ _id: id }).exec().then(result => {
         if (result != null) {
-            const productImages = result.productImages;
-            for (const imageUrl of productImages) {
-                deleteObject(imageUrl);
-            }
+
             updateObj = {}
             for (const key of Object.keys(req.body)) {
                 updateObj[key] = req.body[key];
             }
             if (req.files !== undefined && req.files.length > 0) {
+                const productImages = result.productImages;
+                for (const imageUrl of productImages) {
+                    deleteObject(imageUrl);
+                }
                 const paths = []
                 for (file of req.files) {
                     let path = replaceAll(file.path, '//', '/');
