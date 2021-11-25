@@ -207,15 +207,15 @@ exports.updateProduct = (req, res, next) => {
     const id = req.query.id;
     Product.findOne({ _id: id }).exec().then(result => {
         if (result != null) {
-            const productImages = result.productImages;
-            for (const imageUrl of productImages) {
-                deleteObject(imageUrl);
-            }
             updateObj = {}
             for (const key of Object.keys(req.body)) {
                 updateObj[key] = req.body[key];
             }
             if (req.files !== undefined) {
+                const productImages = result.productImages;
+                for (const imageUrl of productImages) {
+                    deleteObject(imageUrl);
+                }
                 const paths = []
                 for (file of req.files) {
                     let path = replaceAll(file.path, '//', '/');
