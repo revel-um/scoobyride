@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const productSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     model: { type: String, required: true },
-    licencePlate: { type: String, required: true },
+    licencePlate: { type: String },
     rentPerHour: { type: String, required: true },
     rentPerDay: { type: String, required: true },
     productImages: { type: [String], default: [] },
