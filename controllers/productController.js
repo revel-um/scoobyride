@@ -30,7 +30,7 @@ function deleteObject(url) {
                 resolve(image)
             })
             .catch((e) => {
-                print('error print = ' + e);
+                console.log('error print = ' + e);
                 reject(e)
             });
     });
