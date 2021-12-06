@@ -155,7 +155,7 @@ exports.getStoreByPhone = (req, res, next) => {
 exports.getStoreById = (req, res, next) => {
     const id = req.query.storeId;
     Store.findById(id).exec().then(result => {
-        res.status(200).json({data: result});
+        res.status(200).json({ data: result });
     }).catch(err => res.status(500).json({
         error: err
     }));
@@ -276,7 +276,8 @@ exports.updateStore = (req, res, next) => {
         let path = null;
         if (req.file !== undefined) {
             try {
-                deleteObject(image);
+                if (image != null)
+                    deleteObject(image);
             } catch (e) {
                 console.log('Image not available');
             }

@@ -231,7 +231,7 @@ exports.updateProduct = (req, res, next) => {
             }).catch(err => {
                 res.status(500).json({ error: err })
             })
-        }else{
+        } else {
             res.status(500).json({ message: "Result was null for this id" })
         }
     }).catch(err => {
@@ -244,7 +244,8 @@ exports.deleteProduct = (req, res, next) => {
     Product.findById(id).exec().then(result => {
         for (const image of result.productImages) {
             try {
-                deleteObject(image);
+                if (image != null)
+                    deleteObject(image);
             } catch (e) {
                 console.log('Image not available');
             }
