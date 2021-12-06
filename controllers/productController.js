@@ -21,7 +21,6 @@ function deleteObject(url) {
     if (url == null) return;
     new Promise((resolve, reject) => {
         const imageurl = replaceAll(url, 'https://storage.googleapis.com/madhuram-storage/', '');
-        console.log('imageurl print = ' + imageurl);
         storage
             .bucket("madhuram-storage")
             .file(imageurl)
@@ -30,7 +29,6 @@ function deleteObject(url) {
                 resolve(image)
             })
             .catch((e) => {
-                console.log('error print = ' + e);
                 reject(e)
             });
     });
@@ -209,7 +207,7 @@ exports.getProductsByQuery = (req, res, next) => {
 
 exports.updateProduct = (req, res, next) => {
     const id = req.query.id;
-    Product.findOne({ _id: id }).exec().then(result => {
+    Product.findById({ id }).exec().then(result => {
         if (result != null) {
             updateObj = {}
             for (const key of Object.keys(req.body)) {
@@ -233,6 +231,8 @@ exports.updateProduct = (req, res, next) => {
             }).catch(err => {
                 res.status(500).json({ error: err })
             })
+        }else{
+            res.status(500).json({ message: "Result was null for this id" })
         }
     }).catch(err => {
         res.status(500).json({ error: err })

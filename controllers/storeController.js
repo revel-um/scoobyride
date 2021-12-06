@@ -4,7 +4,8 @@ const Product = require('../schemas/productSchema')
 const fs = require('fs');
 
 const { Storage } = require('@google-cloud/storage')
-const path = require('path')
+const path = require('path');
+const { json } = require('body-parser');
 
 const storage = new Storage({
     keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
@@ -269,24 +270,33 @@ exports.deleteStore = (req, res, next) => {
 
 exports.updateStore = (req, res, next) => {
     const id = req.query.id
-    const updateObj = {}
-    let path = null;
-    if (req.file !== undefined) {
-        path = replaceAll(req.file.path, '//', '/');
-        updateObj['storeImage'] = path;
-    }
-    for (const key of Object.keys(req.body)) {
-        if (key != 'storeImage')
-            updateObj[key] = req.body[key];
-    }
-    Store.updateOne({ _id: id }, { $set: updateObj }).exec().then(result => {
-        res.status(200).json({
-            message: "Update sucessful",
-            updateObject: updateObj
+    Store.findById(id).exec().then(result => {
+        const image = result.storeImage;
+        const updateObj = {}
+        let path = null;
+        if (req.file !== undefined) {
+            try {
+                deleteObject(image);
+            } catch (e) {
+                console.log('Image not available');
+            }
+            path = replaceAll(req.file.path, '//', '/');
+            path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage');
+            updateObj['storeImage'] = path;
+        }
+        for (const key of Object.keys(req.body)) {
+            if (key != 'storeImage')
+                updateObj[key] = req.body[key];
+        }
+        Store.updateOne({ _id: id }, { $set: updateObj }).exec().then(result => {
+            res.status(200).json({
+                message: "Update sucessful",
+                updateObject: updateObj
+            })
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            })
         })
-    }).catch(err => {
-        res.status(500).json({
-            error: err
-        })
-    })
+    }).catch()
 }
