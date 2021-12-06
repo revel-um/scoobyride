@@ -12,8 +12,8 @@ const storeSchema = mongoose.Schema({
     address: { type: String, required: true },
     creationDate: { type: Date, required: true },
     subscriptionExpired: { type: Boolean, required: true },
-    openHours: { type: String, default: '["closed", "closed", "closed", "closed", "closed", "closed", "closed",]' },
-    closeHours: { type: String, default: '["closed", "closed", "closed", "closed", "closed", "closed", "closed",]' },
+    openHours: { type: [String], default: ["closed", "closed", "closed", "closed", "closed", "closed", "closed",] },
+    closeHours: { type: [String], default: ["closed", "closed", "closed", "closed", "closed", "closed", "closed",] },
 })
 
 module.exports = mongoose.model('Store', storeSchema)
