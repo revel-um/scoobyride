@@ -16,11 +16,11 @@ const connectDB = async () => { await mongoose.connect('mongodb+srv://utsav:utsa
 connectDB();
 
 
-app.use('/verification', verification)
-app.use('/stores', store)
-app.use('/products', product)
-app.use('/users', user)
-app.use('/orders', order)
+// app.use('/verification', verification)
+// app.use('/stores', store)
+// app.use('/products', product)
+// app.use('/users', user)
+// app.use('/orders', order)
 
 
 app.use('/', (req, res, next) => {
