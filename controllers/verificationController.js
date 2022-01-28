@@ -29,12 +29,10 @@ exports.verifyOtp = (req, res, next) => {
         to: phoneNumber,
         code: otp
     }).then(result => {
-
-        console.log('JWT_KEY = ' + process.env.SECRET_JWT_KEY);
         const token = jwt.sign({
             phoneNumber: phoneNumber,
             code: otp
-        }, process.env.SECRET_JWT_KEY, {
+        }, "VERENT_JWT_PASSKEY", {
             expiresIn: "30d"
         })
 
