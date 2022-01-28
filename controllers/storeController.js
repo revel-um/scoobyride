@@ -1,45 +1,13 @@
 const mongoose = require('mongoose')
 const Store = require('../schemas/storeSchema')
 const Product = require('../schemas/productSchema')
-const fs = require('fs');
-
-const { Storage } = require('@google-cloud/storage')
-const path = require('path');
-const { json } = require('body-parser');
-
-const storage = new Storage({
-    keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
-    projectId: "madhuram-328908",
-});
-
-function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(find, 'g'), replace);
-}
-
-function deleteObject(url) {
-    if (url == null) return;
-    new Promise((resolve, reject) => {
-        const imageurl = replaceAll(url, 'https://storage.googleapis.com/madhuram-storage/', '');
-        storage
-            .bucket("madhuram-storage")
-            .file(imageurl)
-            .delete()
-            .then((image) => {
-                resolve(image)
-            })
-            .catch((e) => {
-                reject(e)
-            });
-    });
-}
+const imageController = require('../controllers/imageController')
 
 exports.createStore = (req, res, next) => {
     const storeObj = {}
 
     if (req.file !== undefined) {
-        let path = replaceAll(req.file.path, '//', '/');
-        path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage')
-        storeObj['storeImage'] = path
+        storeObj['storeImage'] = req.file.location
     }
 
     for (const key of Object.keys(req.body)) {
@@ -207,11 +175,6 @@ exports.deleteStore = (req, res, next) => {
     const id = req.query.id
 
     Product.find({ store: id }).exec().then(result => {
-        if (result.length == 0) {
-            return res.status(500).json({
-                message: 'No stores found'
-            })
-        }
         if (result.length > 0) {
             return res.status(400).json({
                 message: 'There are ' + result.length + ' products left in your store. Delete them first to delete the store'
@@ -225,7 +188,7 @@ exports.deleteStore = (req, res, next) => {
                 }).exec().then(result => {
                     if (r != null) {
                         try {
-                            deleteObject(r);
+                            imageController.deleteImage(r);
                             imageDeletion = 'Image deleted successfully';
                         } catch (e) {
                             imageDeletion = 'Image not found'
@@ -250,7 +213,7 @@ exports.deleteStore = (req, res, next) => {
             }).exec().then(result => {
                 if (r != null) {
                     try {
-                        deleteObject(r);
+                        imageController.deleteImage(r);
                         imageDeletion = 'Image deleted successfully';
                     } catch (e) {
                         imageDeletion = 'Image not found'
@@ -265,7 +228,7 @@ exports.deleteStore = (req, res, next) => {
         }).catch(err => {
             res.status(404).json({ error: err })
         })
-    })
+    });
 }
 
 exports.updateStore = (req, res, next) => {
@@ -277,13 +240,11 @@ exports.updateStore = (req, res, next) => {
         if (req.file !== undefined) {
             try {
                 if (image != null)
-                    deleteObject(image);
+                    imageController.deleteImage(image);
             } catch (e) {
                 console.log('Image not available');
             }
-            path = replaceAll(req.file.path, '//', '/');
-            path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage');
-            updateObj['storeImage'] = path;
+            updateObj['storeImage'] = req.file.location;
         }
         for (const key of Object.keys(req.body)) {
             if (key != 'storeImage')

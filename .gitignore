@@ -1,1 +1,7 @@
-madhuram-328908-1738d4396037.json
+node_modules/
+.gitignore
+.elasticbeanstalk/
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

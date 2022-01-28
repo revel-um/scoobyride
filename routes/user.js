@@ -1,25 +1,9 @@
-const mongoose = require('mongoose')
 const router = require('express').Router()
 const checkAuth = require('../middlewares/checkAuth')
 const userController = require('../controllers/userController')
-const path = require('path')
+const imageController = require('../controllers/imageController')
 
-const multer = require('multer')
-const multerGoogleStorage = require('multer-google-storage')
-
-const upload = multer({
-    storage: multerGoogleStorage.storageEngine({
-        autoRetry: true,
-        keyFilename: require.resolve('../madhuram-328908-1738d4396037.json'),
-        projectId: "madhuram-328908",
-        bucket: 'madhuram-storage',
-        filename: (req, file, cb) => {
-            cb(null, '/images/' + Date.now() + file.originalname);
-        }
-    })
-});
-
-router.patch('/updateUser', checkAuth, upload.single('profilePicture'), userController.updateUser)
+router.patch('/updateUser', checkAuth, imageController.uploadImage.single('profilePicture'), userController.updateUser)
 
 router.get('/getCurrentUser', checkAuth, userController.getCurrentUser)
 

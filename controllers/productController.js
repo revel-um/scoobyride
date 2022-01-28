@@ -1,38 +1,7 @@
 const mongoose = require('mongoose');
-const fs = require('fs')
 const Product = require('../schemas/productSchema')
 const Store = require('../schemas/storeSchema')
-
-function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(find, 'g'), replace);
-}
-
-const { Storage } = require('@google-cloud/storage')
-const path = require('path')
-
-const storage = new Storage({
-    keyFilename: path.join(__dirname, '../madhuram-328908-1738d4396037.json'),
-    projectId: "madhuram-328908",
-});
-
-//[https://storage.googleapis.com/madhuram-storage/images/1637829262878image_picker6662573032523048489.jpg]
-
-function deleteObject(url) {
-    if (url == null) return;
-    new Promise((resolve, reject) => {
-        const imageurl = replaceAll(url, 'https://storage.googleapis.com/madhuram-storage/', '');
-        storage
-            .bucket("madhuram-storage")
-            .file(imageurl)
-            .delete()
-            .then((image) => {
-                resolve(image)
-            })
-            .catch((e) => {
-                reject(e)
-            });
-    });
-}
+const imageController = require('../controllers/imageController')
 
 exports.createProduct = (req, res, next) => {
     const storeId = req.body.store;
@@ -51,13 +20,11 @@ exports.createProduct = (req, res, next) => {
         productObj['_id'] = mongoose.Types.ObjectId();
 
         if (req.files !== undefined) {
-            const paths = []
-            for (file of req.files) {
-                let path = replaceAll(file.path, '//', '/');
-                path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage')
-                paths.push(path);
+            let links = [];
+            for(const file of req.files){
+                links.push(file.location);
             }
-            productObj['productImages'] = paths;
+            productObj['productImages'] = links;
         }
 
         const product = new Product(productObj);
@@ -99,16 +66,15 @@ exports.getProductsOfStore = (req, res, next) => {
 }
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-    var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(lat2 - lat1);  // deg2rad below
-    var dLon = deg2rad(lon2 - lon1);
-    var a =
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);  // deg2rad below
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        ;
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c; // Distance in km
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
     return d;
 }
 
@@ -207,7 +173,7 @@ exports.getProductsByQuery = (req, res, next) => {
 
 exports.updateProduct = (req, res, next) => {
     const id = req.query.id;
-    Product.findById({ id }).exec().then(result => {
+    Product.findById(id).exec().then(result => {
         if (result != null) {
             updateObj = {}
             for (const key of Object.keys(req.body)) {
@@ -216,13 +182,11 @@ exports.updateProduct = (req, res, next) => {
             if (req.files !== undefined && req.files.length > 0) {
                 const productImages = result.productImages;
                 for (const imageUrl of productImages) {
-                    deleteObject(imageUrl);
+                    imageController.deleteImage(imageUrl);
                 }
                 const paths = []
-                for (file of req.files) {
-                    let path = replaceAll(file.path, '//', '/');
-                    path = replaceAll(path, 'madhuram-storage.storage.googleapis.com', '/storage.googleapis.com/madhuram-storage');
-                    paths.push(path);
+                for (const file of req.files) {
+                    paths.push(file.location);
                 }
                 updateObj['productImages'] = paths;
             }
@@ -245,7 +209,7 @@ exports.deleteProduct = (req, res, next) => {
         for (const image of result.productImages) {
             try {
                 if (image != null)
-                    deleteObject(image);
+                    imageController.deleteImage(image);
             } catch (e) {
                 console.log('Image not available');
             }
