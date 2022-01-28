@@ -24,21 +24,18 @@ app.use('/orders', order)
 
 
 app.use('/', (req, res, next) => {
-    // const error = Error("Not found")
-    // error.status = 404
-    // next(error)
-    res.status(404).json({message: "Incorrect route"})
+    const error = Error("Not found")
+    error.status = 404
+    next(error)
 })
 
-// app.use((error, req, res, next) => {
-//     res.status(error.status || 500)
-//     res.json({F
-//         error: {
-//             message: error.message
-//         }
-//     })
-// })
-app.listen(3000, () => {
-    console.log('server running')
+app.use((error, req, res, next) => {
+    res.status(error.status || 500)
+    res.json({
+        error: {
+            message: error.message
+        }
+    })
 })
-// module.exports = app
+
+module.exports = app
