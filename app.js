@@ -23,18 +23,19 @@ app.use('/users', user)
 app.use('/orders', order)
 
 
-app.use((req, res, next) => {
-    const error = Error("Not found")
-    error.status = 404
-    next(error)
+app.use('/', (req, res, next) => {
+    // const error = Error("Not found")
+    // error.status = 404
+    // next(error)
+    res.status(404).json({message: "Incorrect route"})
 })
 
-app.use((error, req, res, next) => {
-    res.status(error.status || 500)
-    res.json({
-        error: {
-            message: error.message
-        }
-    })
-})
+// app.use((error, req, res, next) => {
+//     res.status(error.status || 500)
+//     res.json({
+//         error: {
+//             message: error.message
+//         }
+//     })
+// })
 module.exports = app
