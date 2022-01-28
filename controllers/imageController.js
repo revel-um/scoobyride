@@ -3,14 +3,14 @@ const multer = require('multer')
 const multerS3 = require('multer-s3');
 const AWS = require('aws-sdk')
 const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ID,
-    secretAccessKey: process.env.AWS_SECRET,
+    accessKeyId: "AKIAVVOH26TC752KYE7S",
+    secretAccessKey: "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",
 })
 
 exports.uploadImage = multer({
     storage: multerS3({
         s3: s3,
-        bucket: process.env.AWS_BUCKET_NAME,
+        bucket: "verent",
         key: function (req, file, cb) {
           cb(null, Date.now()+file.originalname)
         }
