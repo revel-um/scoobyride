@@ -21,7 +21,7 @@ exports.createProduct = (req, res, next) => {
 
         if (req.files !== undefined) {
             let links = [];
-            for(const file of req.files){
+            for (const file of req.files) {
                 links.push(file.location);
             }
             productObj['productImages'] = links;
@@ -196,7 +196,7 @@ exports.updateProduct = (req, res, next) => {
                 res.status(500).json({ error: err })
             })
         } else {
-            res.status(500).json({ message: "Result was null for this id" })
+            res.status(500).json({ message: "No product with id " + id })
         }
     }).catch(err => {
         res.status(500).json({ error: err })
@@ -225,6 +225,32 @@ exports.deleteProduct = (req, res, next) => {
             res.status(500).json({
                 error: err
             })
+        })
+    }).catch(err => {
+        res.status(500).json({
+            message: "Product not available",
+            error: err
+        })
+    })
+}
+
+exports.deleteImageFromProduct = (req, res, next) => {
+    const id = req.query.id;
+    const deleteLink = req.body.deleteLink;
+    Product.findById(id).exec().then(result => {
+        if (result == null) {
+            return res.status(400).json({ message: "No product with id " + id });
+        }
+        let allLinks = result.productImages;
+        const itemIndex = allLinks.indexOf(deleteLink);
+        if(itemIndex >= 0){
+            allLinks.splice(itemIndex, 1);
+        }
+        imageController.deleteImage(deleteLink);
+        Product.updateOne({ _id: id }, { $set: { "productImages": allLinks } }).exec().then(result => {
+            res.status(200).json({ data: result })
+        }).catch(err => {
+            res.status(500).json({ error: err })
         })
     }).catch(err => {
         res.status(500).json({
