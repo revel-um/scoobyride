@@ -5,7 +5,7 @@ const imageController = require('../controllers/imageController')
 
 const productController = require('../controllers/productController')
 
-router.post('/createProduct', imageController.uploadImage.array('productImages'), productController.createProduct)
+router.post('/createProduct', checkAuth, imageController.uploadImage.array('productImages'), productController.createProduct)
 
 router.get('/getAllProducts', productController.getAllProducts)
 
@@ -17,6 +17,6 @@ router.patch('/updateProduct', checkAuth, imageController.uploadImage.array('pro
 
 router.delete('/deleteProduct', checkAuth, productController.deleteProduct)
 
-router.patch('/deleteImage', productController.deleteImageFromProduct)
+router.patch('/deleteImage', checkAuth, productController.deleteImageFromProduct)
 
 module.exports = router;
