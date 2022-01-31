@@ -181,10 +181,10 @@ exports.updateProduct = (req, res, next) => {
             }
             if (req.files !== undefined && req.files.length > 0) {
                 const productImages = result.productImages;
+                const paths = [];
                 for (const imageUrl of productImages) {
-                    imageController.deleteImage(imageUrl);
+                    paths.push(imageUrl);
                 }
-                const paths = []
                 for (const file of req.files) {
                     paths.push(file.location);
                 }
