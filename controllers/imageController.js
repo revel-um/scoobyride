@@ -12,7 +12,7 @@ exports.uploadImage = multer({
         s3: s3,
         bucket: "verent",
         key: function (req, file, cb) {
-          cb(null, Date.now()+file.originalname)
+          cb(null, Date.now()+'.'+file.originalname.split('.')[1])
         }
     })
 });
@@ -22,11 +22,14 @@ function replaceAll(str, find, replace) {
 }
 
 exports.deleteImage = (link) => {
-    const key = replaceAll(link, 'https://verent.s3.amazonaws.com/', '');
+    let key = replaceAll(link, 'https://verent.s3.amazonaws.com/', '');
+    key = replaceAll(link, 'https://verent.s3.ap-south-1.amazonaws.com/', '');
+
     const params = {
         Bucket: "verent",
         Key: key
     };
     s3.deleteObject(params, function (err, data) {
+        
     });
 }
