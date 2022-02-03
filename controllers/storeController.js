@@ -236,7 +236,6 @@ exports.updateStore = (req, res, next) => {
     Store.findById(id).exec().then(result => {
         const image = result.storeImage;
         const updateObj = {}
-        let path = null;
         if (req.file !== undefined) {
             try {
                 if (image != null)

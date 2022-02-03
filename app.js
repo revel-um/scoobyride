@@ -7,6 +7,8 @@ const mongoose = require('mongoose')
 const verification = require('./routes/verification')
 const user = require('./routes/user')
 const order = require('./routes/order')
+const imageController = require('./controllers/imageController')
+
 
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
@@ -21,6 +23,13 @@ app.use('/stores', store)
 app.use('/products', product)
 app.use('/users', user)
 app.use('/orders', order)
+app.use('/deleteImage', (req, res, next) => {
+    const imageUrl = req.body.imageUrl;
+    imageController.deleteImage(imageUrl);
+    res.status(200).json({
+        message: 'Image deleted'
+    });
+})
 
 
 app.use('/', (req, res, next) => {
