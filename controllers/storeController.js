@@ -259,5 +259,32 @@ exports.updateStore = (req, res, next) => {
                 error: err
             })
         })
-    }).catch()
+    }).catch(err => res.status(500).json({
+        error: err
+    }));
+}
+
+exports.deleteStoreImage = (req, res, body) => {
+    const id = req.query.id
+    Store.findById(id).exec().then(result => {
+        const image = result.storeImage;
+        if (result != null) {
+            if (image != null) { imageController.deleteImage(image) }
+            const updateObj = { 'storeImage': null }
+            Store.updateOne({ _id: id }, { $set: updateObj }).exec().then(result => {
+                res.status(200).json({
+                    message: "Update sucessful",
+                    updateObject: updateObj
+                })
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
+                })
+            })
+        } else {
+            res.status(200).json({ message: 'No store found with id: ' + id });
+        }
+    }).catch(err => res.status(500).json({
+        error: err
+    }));
 }

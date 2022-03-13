@@ -16,6 +16,8 @@ router.get('/getStoresByQuery', checkAuth, storeController.getStoresByQuery);
 
 router.delete('/deleteStore', checkAuth, storeController.deleteStore)
 
+router.delete('/deleteStoreImage', storeController.deleteStoreImage)
+
 router.patch('/updateStore', checkAuth, imageController.uploadImage.single('storeImage'), storeController.updateStore)
 
 module.exports = router

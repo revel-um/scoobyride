@@ -87,12 +87,61 @@ exports.getAllProducts = (req, res, next) => {
     const lat0 = req.query.latitude;
     const lon0 = req.query.longitude;
     const city = req.query.city;
+    const searchPurelyOnLocation = req.query.searchPurelyOnLocation
 
-    if (lat0 == null || lon0 == null || km == null) {
+    if(searchPurelyOnLocation == undefined){
+        searchPurelyOnLocation = false;
+    }
+    if(searchPurelyOnLocation == true){
+        Product.find().populate({ path: 'store' }).exec().then(result => {
+            returnObj = []
+            for (r of result) {
+                if (r.store != null) {
+                    const lat1 = r.store.latitude
+                    const lon1 = r.store.longitude
+                    const distance = getDistanceFromLatLonInKm(lat0, lon0, lat1, lon1);
+                    if (distance < km) {
+                        returnObj.push(r)
+                    }
+                }
+            }
+            res.status(200).json({
+                data: returnObj
+            })
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        });
+    }else{
+        if (lat0 == null || lon0 == null || km == null) {
+            Product.find().populate({ path: 'store', match: { city: city } }).exec().then(result => {
+                returnObj = []
+                for (r of result) {
+                    if (r.store != null) returnObj.push(r)
+                }
+                res.status(200).json({
+                    data: returnObj
+                })
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
+                })
+            })
+            return;
+        }
+    
         Product.find().populate({ path: 'store', match: { city: city } }).exec().then(result => {
             returnObj = []
             for (r of result) {
-                if (r.store != null) returnObj.push(r)
+                if (r.store != null) {
+                    const lat1 = r.store.latitude
+                    const lon1 = r.store.longitude
+                    const distance = getDistanceFromLatLonInKm(lat0, lon0, lat1, lon1);
+                    if (distance < km) {
+                        returnObj.push(r)
+                    }
+                }
             }
             res.status(200).json({
                 data: returnObj
@@ -102,30 +151,7 @@ exports.getAllProducts = (req, res, next) => {
                 error: err
             })
         })
-        return;
     }
-
-    Product.find().populate({ path: 'store', match: { city: city } }).exec().then(result => {
-        returnObj = []
-        for (r of result) {
-            if (r.store != null) {
-                const lat1 = r.store.latitude
-                const lon1 = r.store.longitude
-                const distance = getDistanceFromLatLonInKm(lat0, lon0, lat1, lon1);
-                if (distance < km) {
-                    returnObj.push(r)
-                }
-            }
-        }
-        res.status(200).json({
-            data: returnObj
-        })
-    }).catch(err => {
-        res.status(500).json({
-            error: err
-        })
-    })
-
 }
 
 const isSubsequence = (str1, str2) => {

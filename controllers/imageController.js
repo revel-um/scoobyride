@@ -23,13 +23,14 @@ function replaceAll(str, find, replace) {
 
 exports.deleteImage = (link) => {
     let key = replaceAll(link, 'https://verent.s3.amazonaws.com/', '');
-    key = replaceAll(link, 'https://verent.s3.ap-south-1.amazonaws.com/', '');
-
+    key = replaceAll(key, 'https://verent.s3.ap-south-1.amazonaws.com/', '');
+    console.log(key);
     const params = {
         Bucket: "verent",
         Key: key
     };
     s3.deleteObject(params, function (err, data) {
-        
+        console.log(err);
+        console.log(data); 
     });
 }
