@@ -19,4 +19,6 @@ router.delete('/deleteProduct', checkAuth, productController.deleteProduct)
 
 router.patch('/deleteImage', checkAuth, productController.deleteImageFromProduct)
 
+router.patch('/updateRatings', productController.updateRatings)
+
 module.exports = router;

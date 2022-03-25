@@ -83,16 +83,16 @@ function deg2rad(deg) {
 }
 
 exports.getAllProducts = (req, res, next) => {
+    console.log('get all products');
     const km = req.query.km;
     const lat0 = req.query.latitude;
     const lon0 = req.query.longitude;
     const city = req.query.city;
-    const searchPurelyOnLocation = req.query.searchPurelyOnLocation
-
-    if(searchPurelyOnLocation == undefined){
+    let searchPurelyOnLocation = req.query.searchPurelyOnLocation
+    if (searchPurelyOnLocation == undefined) {
         searchPurelyOnLocation = false;
     }
-    if(searchPurelyOnLocation == true){
+    if (searchPurelyOnLocation === 'true') {
         Product.find().populate({ path: 'store' }).exec().then(result => {
             returnObj = []
             for (r of result) {
@@ -113,7 +113,7 @@ exports.getAllProducts = (req, res, next) => {
                 error: err
             })
         });
-    }else{
+    } else {
         if (lat0 == null || lon0 == null || km == null) {
             Product.find().populate({ path: 'store', match: { city: city } }).exec().then(result => {
                 returnObj = []
@@ -130,7 +130,7 @@ exports.getAllProducts = (req, res, next) => {
             })
             return;
         }
-    
+
         Product.find().populate({ path: 'store', match: { city: city } }).exec().then(result => {
             returnObj = []
             for (r of result) {
@@ -269,7 +269,7 @@ exports.deleteImageFromProduct = (req, res, next) => {
         }
         let allLinks = result.productImages;
         const itemIndex = allLinks.indexOf(deleteLink);
-        if(itemIndex >= 0){
+        if (itemIndex >= 0) {
             allLinks.splice(itemIndex, 1);
         }
         imageController.deleteImage(deleteLink);
@@ -284,4 +284,22 @@ exports.deleteImageFromProduct = (req, res, next) => {
             error: err
         })
     })
+}
+
+exports.updateRatings = (req, res, next) => {
+    const id = req.query.id;
+    const ratings = parseFloat(req.query.ratings);
+    Product.findById(id).exec().then((result => {
+        if (result == null) {
+            return res.status(400).json({ message: "No product with id " + id });
+        }
+        const currRatings = result.ratings;
+        const num = result.ratedBy;
+        const newRating = ((currRatings * num) + ratings) / (num + 1);
+        Product.updateOne({ _id: id }, { $set: { "ratings": newRating, 'ratedBy': num + 1 } }).exec().then(result => {
+            return res.status(200).json({ message: 'Your rating has been considered' });
+        }).catch((err) => {
+            return res.status(500).json({ error: err });
+        });
+    })).catch((err) => { return res.status(500).json({ error: err }); });
 }

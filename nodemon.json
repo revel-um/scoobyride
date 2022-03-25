@@ -1,8 +1,8 @@
 {
     "env": {
-        "SECRET_JWT_KEY": "VERENT_JWT_PASSKEY",
-        "AWS_ID": "AKIAVVOH26TC752KYE7S",
-        "AWS_SECRET": "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",
-        "AWS_BUCKET_NAME": "verent"
+        "SECRET_JWT_KEY": "SCCOBY_JWT_PASSKEY",
+        "AWS_ID": "AKIAWL5HNPXS6ADVQ3NT",
+        "AWS_SECRET": "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",
+        "AWS_BUCKET_NAME": "scoobyride"
     }
 }

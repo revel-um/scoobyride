@@ -13,7 +13,8 @@ const productSchema = mongoose.Schema({
     bullets: String,
     size: String,
     discount: Number,
-    rating: {Object},
+    ratings: {type: Number, default: 0},
+    ratedBy: {type: Number, default: 0},
     isDiscountPercent: { type: Boolean, default: true },
     booked: { type: Boolean, default: false }
 })
