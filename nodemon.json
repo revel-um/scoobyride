@@ -1,6 +1,6 @@
 {
     "env": {
-        "SECRET_JWT_KEY": "SCCOBY_JWT_PASSKEY",
+        "SECRET_JWT_KEY": "SCOOBY_JWT_PASSKEY",
         "AWS_ID": "AKIAWL5HNPXS6ADVQ3NT",
         "AWS_SECRET": "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",
         "AWS_BUCKET_NAME": "scoobyride"

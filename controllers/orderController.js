@@ -1,41 +1,84 @@
 const mongoose = require('mongoose')
 const Order = require('../schemas/orderSchema')
+const Product = require('../schemas/productSchema')
 
-exports.placeOrder = (req, res, next) => {
-    const orderObj = {}
-    for (const key of Object.keys(req.body)) {
-        orderObj[key] = req.body[key]
-    }
-    orderObj['_id'] = mongoose.Types.ObjectId();
-    orderObj['orderDate'] = new Date()
-    const order = new Order(orderObj);
-    order.save().then(result => {
-        res.status(200).json({ message: 'Order placed successfully' })
-    })
+
+const stateStringToInt = {
+    'Cart': 0,
+    'Order Confirmed': 1,
+    'Order Complete': 2,
+    'Favourites': 3
+};
+
+const stateIntToString = {
+    0: 'Cart',
+    1: 'Order Confirmed',
+    2: 'Order Complete',
+    3: 'Favourites'
+};
+
+exports.addOrUpdateOrderState = (req, res, next) => {
+    const id = req.userData.userId;
+    Order.findOne({ user: req.userData.userId }).exec().then((result) => {
+        const productId = req.body.productId;
+        const state = req.body.state;
+        Product.findById(productId).exec().then((resultOfProduct) => {
+            if (resultOfProduct == undefined) return res.status(400).json({ message: 'This productId is not valid' });
+            if (!state in stateStringToInt && state != 'Delete') return res.status(400).json({ error: 'This state is not valid, valid states are: ' + Object.keys(stateStringToInt) });
+            if (result == undefined) {
+                const orderObj = {}
+                orderObj['_id'] = mongoose.Types.ObjectId();
+                orderObj['user'] = id;
+                orderObj['items'] = { 'product': productId, state: stateStringToInt[state] };
+                const order = new Order(orderObj);
+                order.save().then(result => {
+                    res.status(200).json({ message: 'Created successfully', result: result })
+                });
+            }
+            else {
+                const items = result.items;
+                const itemIds = [];
+                let count = -1;
+                let newProductInOrder = true;
+                for (let item of items) {
+                    count++;
+                    if (item['product'].toString() == productId) {
+                        newProductInOrder = false;
+                        if (state == 'Delete') {
+                            result.items.pop(count);
+                        } else {
+                            result.items[count]['state'] = stateStringToInt[state];
+                            item['product'] = stateStringToInt[state];
+                        }
+                    }
+                }
+                if (newProductInOrder) {
+                    if (state == 'Delete') {
+                        return res.status(400).json({ message: 'Can not delete because it is not added' });
+                    }
+                    result.items.push({
+                        'product': mongoose.Types.ObjectId(productId),
+                        'state': stateStringToInt[state]
+                    });
+                }
+                Order.updateOne({ _id: result._id }, { $set: { 'items': result.items } }).exec().then((result) => {
+                    return res.status(200).json({ result: result });
+                }).catch((err) => {
+                    return res.status(500).json({ error: err });
+                });
+            }
+        });
+    }).catch((err) => {
+        return res.status(500).json({ message: 'catch', err: err });
+    });
 }
 
-exports.getUnpreparedOrders = (req, res, next) => {
-    const storeId = req.query.storeId;
-    Order.find({ store: storeId, state: 0 }).populate('product').exec().then(result => {
-        res.status(200).json({ data: result })
-    }).catch(err => {
-        res.status(500).json({ error: err })
-    })
-}
-
-exports.getActiveOrders = (req, res, next) => {
-    const userId = req.query.userId;
-    Order.find({ user: userId, state: { $ne: 4 } }).populate('product').exec().then(result => {
-        res.status(200).json({ data: result })
-    }).catch(err => {
-        res.status(500).json({ error: err })
-    })
-}
-
-exports.getOrderHistory = (req, res, next) => {
-    Order.find({ user: userId, state: 4 }).populate('product').exec().then(result => {
-        res.status(200).json({ data: result })
-    }).catch(err => {
-        res.status(500).json({ error: err })
-    })
+exports.getOrderState = (req, res, next) => {
+    const userId = req.userData.userId;
+    Order.findOne({ user: userId }).exec().then((result) => {
+        req.productStateDetails = result;
+        next();
+    }).catch((err) => {
+        res.status(500).json({ error: err, message: 'Error occured while getOrderState' });
+    });
 }

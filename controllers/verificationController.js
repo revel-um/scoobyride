@@ -29,17 +29,28 @@ exports.verifyOtp = (req, res, next) => {
         to: phoneNumber,
         code: otp
     }).then(result => {
-        const token = jwt.sign({
-            phoneNumber: phoneNumber,
-            code: otp
-        }, "VERENT_JWT_PASSKEY", {
-            expiresIn: "30d"
-        })
-
+        let b = true;
         User.findOne({ phoneNumber: phoneNumber }).exec().then(result => {
+            let userId;
             if (result == null) {
+                b = true;
+                userId = mongoose.Types.ObjectId();
+            }
+            else {
+                b = false;
+                userId = result._id;
+
+            }
+            const token = jwt.sign({
+                phoneNumber: phoneNumber,
+                code: otp,
+                userId: userId
+            }, "SCOOBY_JWT_PASSKEY", {
+                expiresIn: "30d"
+            })
+            if (b == true) {
                 const user = new User({
-                    _id: mongoose.Types.ObjectId(),
+                    _id: userId,
                     phoneNumber: phoneNumber
                 })
 
@@ -51,8 +62,7 @@ exports.verifyOtp = (req, res, next) => {
                 }).catch(err => {
                     return res.status(400).json({ saveError: err })
                 })
-            }
-            else {
+            } else {
                 return res.status(200).json({
                     token: token,
                     response: result

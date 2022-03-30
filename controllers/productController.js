@@ -48,21 +48,22 @@ exports.createProduct = (req, res, next) => {
 
 exports.getProductsOfStore = (req, res, next) => {
     const storeId = req.query.storeId;
-    Product.find({ store: storeId }).exec().then(result => {
-        Store.findById(storeId).exec().then(result1 => {
+    Store.findById(storeId).exec().then(result1 => {
+        if (result1 == undefined) res.status(400).json({ message: 'This store does not exist' });
+        Product.find({ store: storeId }).exec().then(result => {
             res.status(200).json({
-                data: { 'products': result, 'store': result1 }
+                data: { 'products': result, 'store': result1, order: req.productStateDetails }
             })
         }).catch(err => {
-            res.status(400).json({
+            res.status(500).json({
                 error: err
             })
-        });
+        })
     }).catch(err => {
-        res.status(500).json({
+        res.status(400).json({
             error: err
         })
-    })
+    });
 }
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
@@ -106,7 +107,8 @@ exports.getAllProducts = (req, res, next) => {
                 }
             }
             res.status(200).json({
-                data: returnObj
+                data: returnObj,
+                order: req.productStateDetails
             })
         }).catch(err => {
             res.status(500).json({
@@ -121,7 +123,8 @@ exports.getAllProducts = (req, res, next) => {
                     if (r.store != null) returnObj.push(r)
                 }
                 res.status(200).json({
-                    data: returnObj
+                    data: returnObj,
+                    order: req.productStateDetails
                 })
             }).catch(err => {
                 res.status(500).json({
@@ -144,7 +147,80 @@ exports.getAllProducts = (req, res, next) => {
                 }
             }
             res.status(200).json({
-                data: returnObj
+                data: returnObj,
+                order: req.productStateDetails
+            })
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        })
+    }
+}
+
+exports.getAllProductsWithoutAuth = (req, res, next) => {
+    console.log('get all products');
+    const km = req.query.km;
+    const lat0 = req.query.latitude;
+    const lon0 = req.query.longitude;
+    const city = req.query.city;
+    let searchPurelyOnLocation = req.query.searchPurelyOnLocation
+    if (searchPurelyOnLocation == undefined) {
+        searchPurelyOnLocation = false;
+    }
+    if (searchPurelyOnLocation === 'true') {
+        Product.find().populate({ path: 'store' }).exec().then(result => {
+            returnObj = []
+            for (r of result) {
+                if (r.store != null) {
+                    const lat1 = r.store.latitude
+                    const lon1 = r.store.longitude
+                    const distance = getDistanceFromLatLonInKm(lat0, lon0, lat1, lon1);
+                    if (distance < km) {
+                        returnObj.push(r)
+                    }
+                }
+            }
+            res.status(200).json({
+                data: returnObj,
+            })
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        });
+    } else {
+        if (lat0 == null || lon0 == null || km == null) {
+            Product.find().populate({ path: 'store', match: { city: city } }).exec().then(result => {
+                returnObj = []
+                for (r of result) {
+                    if (r.store != null) returnObj.push(r)
+                }
+                res.status(200).json({
+                    data: returnObj,
+                })
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
+                })
+            })
+            return;
+        }
+
+        Product.find().populate({ path: 'store', match: { city: city } }).exec().then(result => {
+            returnObj = []
+            for (r of result) {
+                if (r.store != null) {
+                    const lat1 = r.store.latitude
+                    const lon1 = r.store.longitude
+                    const distance = getDistanceFromLatLonInKm(lat0, lon0, lat1, lon1);
+                    if (distance < km) {
+                        returnObj.push(r)
+                    }
+                }
+            }
+            res.status(200).json({
+                data: returnObj,
             })
         }).catch(err => {
             res.status(500).json({
@@ -188,7 +264,8 @@ exports.getProductsByQuery = (req, res, next) => {
             }
         }
         res.status(200).json({
-            data: returnObj
+            data: returnObj,
+            order: req.productStateDetails
         })
     }).catch(err => {
         res.status(500).json({

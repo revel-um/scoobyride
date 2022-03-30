@@ -28,7 +28,7 @@ exports.updateUser = (req, res, next) => {
 }
 
 exports.getCurrentUser = (req, res, next) => {
-    User.findOne({ phoneNumber: req.userData.phoneNumber }).exec().then(result => {
+    User.findById(req.userData.userId).exec().then(result => {
         res.status(200).json({ data: result })
     }).catch(err => {
         res.status(500).json({
