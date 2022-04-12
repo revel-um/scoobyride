@@ -10,13 +10,6 @@ const stateStringToInt = {
     'Favourites': 3
 };
 
-const stateIntToString = {
-    0: 'Cart',
-    1: 'Order Confirmed',
-    2: 'Order Complete',
-    3: 'Favourites'
-};
-
 exports.addOrUpdateOrderState = (req, res, next) => {
     const id = req.userData.userId;
     Order.findOne({ user: req.userData.userId }).exec().then((result) => {
@@ -37,7 +30,6 @@ exports.addOrUpdateOrderState = (req, res, next) => {
             }
             else {
                 const items = result.items;
-                const itemIds = [];
                 let count = -1;
                 let newProductInOrder = true;
                 for (let item of items) {
