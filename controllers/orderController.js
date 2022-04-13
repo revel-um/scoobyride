@@ -65,6 +65,15 @@ exports.addOrUpdateOrderState = (req, res, next) => {
     });
 }
 
+exports.getMyOrders = (req, res, next) => {
+    const userId = req.userData.userId;
+    Order.findOne({ user: userId }).populate('items.product').exec().then((result) => {
+        res.send(result);
+    }).catch((err) => {
+        res.status(500).json({ error: err, message: 'Error occured while getMyOrders' });
+    });
+}
+
 exports.getOrderState = (req, res, next) => {
     const userId = req.userData.userId;
     Order.findOne({ user: userId }).exec().then((result) => {
