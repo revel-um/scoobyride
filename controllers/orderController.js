@@ -108,6 +108,7 @@ exports.getOrderState = (req, res, next) => {
         .populate("items.product").populate('items.store')
         .exec()
         .then((result) => {
+            console.log(result);
             req.productStateDetails = result;
             next();
         })
