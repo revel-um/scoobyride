@@ -59,6 +59,7 @@ exports.addOrUpdateOrderState = (req, res, next) => {
                                 } else {
                                     result.items[count]["state"] = stateStringToInt[state];
                                     item["product"] = stateStringToInt[state];
+                                    result.items[count]["store"] = store;
                                 }
                             }
                         }
@@ -71,6 +72,7 @@ exports.addOrUpdateOrderState = (req, res, next) => {
                             result.items.push({
                                 product: mongoose.Types.ObjectId(productId),
                                 state: stateStringToInt[state],
+                                store: store
                             });
                         }
                         Order.updateOne({ _id: result._id }, { $set: { items: result.items } })
