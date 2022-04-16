@@ -11,7 +11,6 @@ const productSchema = mongoose.Schema({
     criteria: { type: String, required: true },
     details: String,
     bullets: String,
-    size: String,
     discount: Number,
     ratings: {type: Number, default: 0},
     ratedBy: {type: Number, default: 0},
