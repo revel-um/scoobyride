@@ -76,7 +76,7 @@ exports.getMyOrders = (req, res, next) => {
 
 exports.getOrderState = (req, res, next) => {
     const userId = req.userData.userId;
-    Order.findOne({ user: userId }).exec().then((result) => {
+    Order.findOne({ user: userId }).populate('items.product').exec().then((result) => {
         req.productStateDetails = result;
         next();
     }).catch((err) => {
