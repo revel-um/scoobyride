@@ -3,7 +3,7 @@ const checkAuth = require('../middlewares/checkAuth')
 const userController = require('../controllers/userController')
 const imageController = require('../controllers/imageController')
 
-router.patch('/updateUser', imageController.uploadImage.single('profilePicture'), userController.updateUser)
+router.patch('/updateUser', checkAuth, imageController.uploadImage.single('profilePicture'), userController.updateUser)
 
 router.get('/getCurrentUser', checkAuth, userController.getCurrentUser)
 
