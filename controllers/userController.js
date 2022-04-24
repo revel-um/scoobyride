@@ -45,7 +45,7 @@ exports.getCurrentUser = (req, res, next) => {
 };
 
 exports.deleteUser = (req, res, next) => {
-    User.findOne({ phoneNumber: req.userData.phoneNumber })
+    User.findById(req.userData.userId)
         .exec()
         .then((result) => {
             imageController.deleteImage(result.profilePicture);
@@ -98,5 +98,25 @@ exports.deleteUserById = (req, res, next) => {
         })
         .catch((err) => {
             res.status(500).json({ error: err });
+        });
+};
+
+exports.removeProfilePicture = (req, res, next) => {
+    User.findById(req.userData.userId)
+        .exec()
+        .then((result) => {
+            console.log("profile picture = " + result.profilePicture);
+            if (result.profilePicture !== undefined) {
+                imageController.deleteImage(result.profilePicture);
+                result.profilePicture = undefined;
+                result.save();
+                return res.send({ message: "Image deleted" });
+            }
+            res.send({ message: "No picture was attached to user" });
+        })
+        .catch((err) => {
+            res.status(500).json({
+                error: err,
+            });
         });
 };
