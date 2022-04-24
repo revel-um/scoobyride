@@ -94,7 +94,7 @@ exports.addOrUpdateOrderState = (req, res, next) => {
 exports.getMyOrders = (req, res, next) => {
     const userId = req.userData.userId;
     Order.findOne({ user: userId })
-        .populate("items.product").populate('items.store')
+        .populate("items.product").populate('items.store').populate('user')
         .exec()
         .then((result) => {
             res.send(result);
@@ -107,7 +107,7 @@ exports.getMyOrders = (req, res, next) => {
 exports.getOrderState = (req, res, next) => {
     const userId = req.userData.userId;
     Order.findOne({ user: userId })
-        .populate("items.product").populate('items.store')
+        .populate("items.product").populate('items.store').populate('user')
         .exec()
         .then((result) => {
             console.log(result);
