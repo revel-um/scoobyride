@@ -2,11 +2,11 @@ const User = require("../schemas/userSchema");
 const imageController = require("../controllers/imageController");
 
 exports.updateUser = (req, res, next) => {
-    User.findOne({ phoneNumber: req.userData.phoneNumber })
+    console.log(req.userData);
+    User.findById(req.userData.userId)
         .exec()
         .then((result) => {
-            const userObj = {};
-            userObj = req.body;
+            const userObj = req.body;
             if (req.file !== undefined) {
                 if (result.profilePicture !== undefined)
                     imageController.deleteImage(result.profilePicture);
@@ -19,7 +19,7 @@ exports.updateUser = (req, res, next) => {
                     });
                 })
                 .catch((err) => {
-                    res.status(200).json({
+                    res.status(500).json({
                         error: err,
                     });
                 });
