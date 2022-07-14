@@ -15,7 +15,8 @@ const productSchema = mongoose.Schema({
     ratings: {type: Number, default: 0},
     ratedBy: {type: Number, default: 0},
     isDiscountPercent: { type: Boolean, default: true },
-    booked: { type: Boolean, default: false }
+    booked: { type: Boolean, default: false },
+    bookings: Map
 })
 
 module.exports = mongoose.model('Product', productSchema)

@@ -3,10 +3,11 @@ const Order = require("../schemas/orderSchema");
 const Product = require("../schemas/productSchema");
 
 const stateStringToInt = {
-    Cart: 0,
+    "Cart": 0,
     "Order Confirmed": 1,
     "Order Complete": 2,
-    Favourites: 3,
+    "Favourites": 3,
+    "Canceled": 4,
 };
 
 exports.addOrUpdateOrderState = (req, res, next) => {
@@ -23,21 +24,37 @@ exports.addOrUpdateOrderState = (req, res, next) => {
                     if (resultOfProduct == undefined)
                         return res.status(400).json({ message: "This productId is not valid" });
                     if (!state in stateStringToInt && state != "Delete")
-                        return res
-                            .status(400)
-                            .json({
-                                error:
-                                    "This state is not valid, valid states are: " +
-                                    Object.keys(stateStringToInt),
-                            });
+                        return res.status(400).json({
+                            error:
+                                "This state is not valid, valid states are: " +
+                                Object.keys(stateStringToInt),
+                        });
                     if (result == undefined) {
                         const orderObj = {};
                         orderObj["_id"] = mongoose.Types.ObjectId();
                         orderObj["user"] = id;
+                        let bookings = {};
+                        if (state == "Order Confirmed" && req.body.bookingDate) {
+                            bookings[req.body.bookingDate] = id;
+                            Product.updateOne(
+                                productId,
+                                { bookings: bookings },
+                                function (err, docs) {}
+                            );
+                        }
+                        if (state == "Canceled" && req.body.bookingDate) {
+                            bookings[req.body.bookingDate] = undefined;
+                            Product.updateOne(
+                                productId,
+                                { bookings: bookings },
+                                function (err, docs) {}
+                            );
+                        }
                         orderObj["items"] = {
                             product: productId,
                             state: stateStringToInt[state],
                             store: store,
+                            bookings: bookings,
                         };
                         const order = new Order(orderObj);
                         order.save().then((result) => {
@@ -72,10 +89,30 @@ exports.addOrUpdateOrderState = (req, res, next) => {
                             result.items.push({
                                 product: mongoose.Types.ObjectId(productId),
                                 state: stateStringToInt[state],
-                                store: store
+                                store: store,
                             });
                         }
-                        Order.updateOne({ _id: result._id }, { $set: { items: result.items } })
+                        let bookings = {};
+                        if (state == "Order Confirmed" && req.body.bookingDate) {
+                            bookings[req.body.bookingDate] = id;
+                            Product.updateOne(
+                                productId,
+                                { bookings: bookings },
+                                function (err, docs) {}
+                            );
+                        }
+                        if (state == "Canceled" && req.body.bookingDate) {
+                            bookings[req.body.bookingDate] = undefined;
+                            Product.updateOne(
+                                productId,
+                                { bookings: bookings },
+                                function (err, docs) {}
+                            );
+                        }
+                        Order.updateOne(
+                            { _id: result._id },
+                            { $set: { items: result.items, bookings: bookings } }
+                        )
                             .exec()
                             .then((result) => {
                                 return res.status(200).json({ result: result });
@@ -94,7 +131,9 @@ exports.addOrUpdateOrderState = (req, res, next) => {
 exports.getMyOrders = (req, res, next) => {
     const userId = req.userData.userId;
     Order.findOne({ user: userId })
-        .populate("items.product").populate('items.store').populate('user')
+        .populate("items.product")
+        .populate("items.store")
+        .populate("user")
         .exec()
         .then((result) => {
             res.send(result);
@@ -107,7 +146,9 @@ exports.getMyOrders = (req, res, next) => {
 exports.getOrderState = (req, res, next) => {
     const userId = req.userData.userId;
     Order.findOne({ user: userId })
-        .populate("items.product").populate('items.store').populate('user')
+        .populate("items.product")
+        .populate("items.store")
+        .populate("user")
         .exec()
         .then((result) => {
             console.log(result);
